@@ -14,4 +14,25 @@ services:
     command: npm run start:dev
     env_file:
       - .env
-
+    networks:
+      - ultra-gaming
+    depends_on:
+      - mysql
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    networks:
+      - ultra-gaming
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE_NAME}
+    ports:
+      - 3306:3306
+    volumes:
+      - sqldata:/var/lib/mysql
+networks:
+  ultra-gaming:
+volumes:
+  sqldata:
