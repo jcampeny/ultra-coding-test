@@ -30,6 +30,11 @@ export class GamesController {
     return this.gamesService.findOne(id);
   }
 
+  @Get(':id/publisher')
+  findPublisher(@Param('id') id: string) {
+    return this.gamesService.findPublisher(id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateGameDto: UpdateGameDto) {
     return this.gamesService.update(id, updateGameDto);

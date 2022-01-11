@@ -1,7 +1,7 @@
 export class CreateGameDto {
   title: string;
   price: number;
-  publisher: string;
+  publisherId: string;
   tags: string[];
   releaseDate: string;
 }
