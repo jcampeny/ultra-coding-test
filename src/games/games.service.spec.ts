@@ -19,7 +19,7 @@ const publisher: Publisher = {
 
 const createGameA: CreateGameDto = {
   title: 'God of wars 17',
-  price: 78,
+  price: 78.0,
   publisherId: publisher.id,
   tags: ['god', 'of', 'wars'],
   releaseDate: '2022-01-25',
@@ -32,6 +32,7 @@ const updateGameA: UpdateGameDto = {
 const gameA: Game = {
   id: 'abc',
   publisher,
+  priceDiscount: 0.0,
   ...createGameA,
 };
 
@@ -40,6 +41,7 @@ const gameB: Game = {
   title: 'FIFA 2028',
   price: 67,
   publisher,
+  priceDiscount: 0.0,
   tags: ['football', 'fifa', '2028'],
   releaseDate: '2022-01-27',
 };
@@ -81,6 +83,7 @@ describe('GamesService', () => {
               .mockImplementation(() => Promise.resolve(gameA)),
             save: jest.fn().mockImplementation(() => Promise.resolve(gameA)),
             delete: jest.fn().mockImplementation(),
+            remove: jest.fn().mockImplementation(),
           },
         },
         {
@@ -204,7 +207,7 @@ describe('GamesService', () => {
   });
 
   describe('findPublisher', () => {
-    it('should should find the game and return the publisher', async () => {
+    it('should find the game and return the publisher', async () => {
       expect(await service.findPublisher(gameA.id)).toBe(publisher);
       expect(gamesRepository.findOneOrFail).toHaveBeenCalledWith(gameA.id);
     });
@@ -213,6 +216,45 @@ describe('GamesService', () => {
       findOrFailShouldReject(gamesRepository);
 
       await expectToThrowNotFound(() => service.findOne('whatever-id'));
+    });
+  });
+
+  describe('clearStock', () => {
+    let oldGame: Game;
+    let recentGame: Game;
+    let newGame: Game;
+
+    beforeEach(() => {
+      gamesRepository.findWithReleaseOlderThan = jest
+        .fn()
+        .mockImplementation(() =>
+          Promise.resolve([oldGame, recentGame, newGame]),
+        );
+
+      function getDateFromMonth(months: number): string {
+        const now = new Date();
+        return new Date(now.setMonth(now.getMonth() + months)).toString();
+      }
+
+      oldGame = { ...gameA, releaseDate: getDateFromMonth(-18) };
+      recentGame = { ...gameA, releaseDate: getDateFromMonth(-12) };
+      newGame = { ...gameA, releaseDate: getDateFromMonth(-11) };
+    });
+
+    it('should remove games older than 18 months', async () => {
+      await service.clearStock();
+
+      expect(gamesRepository.findWithReleaseOlderThan).toBeCalled();
+      expect(gamesRepository.remove).toBeCalledWith([oldGame]);
+    });
+
+    it('should update games price older than 12 months', async () => {
+      await service.clearStock();
+
+      expect(gamesRepository.findWithReleaseOlderThan).toBeCalled();
+      expect(gamesRepository.save).toBeCalledWith([
+        { ...recentGame, priceDiscount: 62.4 },
+      ]);
     });
   });
 });

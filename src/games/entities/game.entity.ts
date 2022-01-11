@@ -9,8 +9,11 @@ export class Game {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
   price: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0.0 })
+  priceDiscount: number;
 
   @ManyToOne(() => Publisher, { eager: true })
   publisher: Publisher;

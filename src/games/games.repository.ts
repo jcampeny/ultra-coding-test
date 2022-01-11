@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, LessThanOrEqual, Repository } from 'typeorm';
 import { Game } from './entities/game.entity';
 import { CreateGameDto } from './dto/create-game.dto';
 import { Publisher } from '../publishers/entities/publisher.entity';
@@ -20,5 +20,13 @@ export class GamesRepository extends Repository<Game> {
     await this.save(game);
 
     return game;
+  }
+
+  async findWithReleaseOlderThan(fromDate: Date): Promise<Game[]> {
+    return this.find({
+      where: {
+        releaseDate: LessThanOrEqual(fromDate),
+      },
+    });
   }
 }

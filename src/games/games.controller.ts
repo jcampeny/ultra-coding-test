@@ -1,11 +1,12 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get, HttpCode,
+  Param,
+  Patch,
+  Post,
+  Put,
 } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { CreateGameDto } from './dto/create-game.dto';
@@ -43,5 +44,11 @@ export class GamesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.gamesService.remove(id);
+  }
+
+  @Put('clear-stock')
+  @HttpCode(204)
+  clearStock() {
+    return this.gamesService.clearStock();
   }
 }

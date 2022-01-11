@@ -5,8 +5,6 @@ import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { Game } from './entities/game.entity';
 import { Publisher } from '../publishers/entities/publisher.entity';
-import { Repository } from 'typeorm';
-import { HttpException, HttpStatus } from '@nestjs/common';
 
 const publisher: Publisher = {
   id: 'abc',
@@ -17,7 +15,7 @@ const publisher: Publisher = {
 
 const createGameA: CreateGameDto = {
   title: 'God of wars 17',
-  price: 78,
+  price: 78.0,
   publisherId: publisher.id,
   tags: ['god', 'of', 'wars'],
   releaseDate: '2022-01-25',
@@ -30,13 +28,15 @@ const updateGameA: UpdateGameDto = {
 const gameA: Game = {
   ...createGameA,
   id: 'abc',
+  priceDiscount: 0.0,
   publisher,
 };
 
 const gameB: Game = {
   id: 'abc',
   title: 'FIFA 2028',
-  price: 67,
+  price: 67.0,
+  priceDiscount: 0.0,
   publisher,
   tags: ['football', 'fifa', '2028'],
   releaseDate: '2022-01-27',
@@ -70,6 +70,7 @@ describe('GamesController', () => {
             findPublisher: jest
               .fn()
               .mockImplementation(() => Promise.resolve(publisher)),
+            clearStock: jest.fn(),
           },
         },
       ],
@@ -126,6 +127,14 @@ describe('GamesController', () => {
     it('should should find the game and return the publisher', async () => {
       expect(await controller.findPublisher(gameA.id)).toBe(publisher);
       expect(service.findPublisher).toHaveBeenCalledWith(gameA.id);
+    });
+  });
+
+  describe('clearStock', () => {
+    it('should clear the stock', async () => {
+      await controller.clearStock();
+
+      expect(service.clearStock).toHaveBeenCalled();
     });
   });
 });

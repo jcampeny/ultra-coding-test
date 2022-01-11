@@ -8,6 +8,10 @@ import { Publisher } from '../publishers/entities/publisher.entity';
 
 @Injectable()
 export class GamesService {
+  private readonly DELETE_MONTHS = -18;
+  private readonly UPDATE_PRICE_MONTHS = -12;
+  private readonly PERCENTAGE_DISCOUNT_OLD_GAMES = 20;
+
   constructor(
     private readonly gamesRepository: GamesRepository,
     private readonly publisherRepository: PublishersRepository,
@@ -48,6 +52,45 @@ export class GamesService {
     const game = await this.findGameOrFail(id);
 
     return game.publisher;
+  }
+
+  async clearStock(): Promise<void> {
+    const dateToDelete = this.getDateFromMonth(this.DELETE_MONTHS);
+    const dateToUpdate = this.getDateFromMonth(this.UPDATE_PRICE_MONTHS);
+
+    const games = await this.gamesRepository.findWithReleaseOlderThan(
+      dateToUpdate,
+    );
+
+    const toDelete: Game[] = [];
+    const toUpdate: Game[] = [];
+
+    games.forEach((game) => {
+      if (new Date(game.releaseDate) <= dateToDelete) {
+        toDelete.push(game);
+        return;
+      }
+      if (new Date(game.releaseDate) <= dateToUpdate) {
+        toUpdate.push(
+          this.applyDiscount(game, this.PERCENTAGE_DISCOUNT_OLD_GAMES),
+        );
+      }
+    });
+
+    await Promise.all([
+      this.gamesRepository.remove(toDelete),
+      this.gamesRepository.save(toUpdate),
+    ]);
+  }
+
+  private getDateFromMonth(months: number) {
+    const now = new Date();
+    return new Date(now.setMonth(now.getMonth() + months));
+  }
+
+  private applyDiscount(game: Game, discount: number): Game {
+    game.priceDiscount = game.price - game.price * (discount / 100);
+    return game;
   }
 
   private async findGameOrFail(id: string): Promise<Game> {

@@ -16,7 +16,8 @@ const publisher: Publisher = {
 const aGame: Game = {
   id: 'abc',
   title: 'God of wars 17',
-  price: 78,
+  price: 78.0,
+  priceDiscount: 0.0,
   publisher,
   tags: ['god', 'of', 'wars'],
   releaseDate: '2022-01-25',
@@ -46,6 +47,7 @@ describe('Games', () => {
         update: () => Promise.resolve(aGame),
         remove: () => Promise.resolve(),
         findPublisher: () => Promise.resolve(publisher),
+        clearStock: () => Promise.resolve(),
       })
       .compile();
 
@@ -151,6 +153,12 @@ describe('Games', () => {
         .get(`/games/whatever-id/publisher`)
         .expect(404)
         .expect({ statusCode: 404, message: 'Not found' });
+    });
+  });
+
+  describe('PUT /games/clear-stock', () => {
+    it('should response 204', () => {
+      return request(app.getHttpServer()).put('/games/clear-stock').expect(204);
     });
   });
 
