@@ -1,73 +1,78 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
+  <a href="https://ultra.io/">
+    <img src="https://ultra.io/logotype-icon.png" width="150px" height="150px"/>
+  </a>
+</p>
+<h1 align="center">
+    🎮️ Ultra Coding Test
+</h1>
+
+<p align="center">
+    This is a coding exercise that consist in implementing a little backend micro-service which aims to serve games data.
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
+## 🛠️ Running the app
+To download the necessary docker images, build dependencies and start the application you should execute:
 ```bash
-$ npm install
+$ docker-compose up
+```
+The application is running now on: http://localhost:3000/ .</br></br>
+_In order to run tests in your local machine you should execute`npm install`_
+
+## 🐳 Access Docker containers
+Get the container id that you want to access:
+```bash
+$ docker ps
+```
+And then access to the container:
+```bash
+$ docker exec -it CONTAINER_ID /bin/sh
 ```
 
-## Running the app
-
+## 🗄️ Run queries to MySQL 
+Inside the MySQL docker container execute:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Access to MySQL client as a root
+$ mysql -u root -p
+# You can find the root password in .env file
+# Use the project's database
+$ USE ultra-gaming;
 ```
 
-## Test
-
+## 🧪 Test
+To develop or run the unit tests faster install the dependencies in your machine and execute:
 ```bash
-# unit tests
 $ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+ # PASS  src/app.controller.spec.ts (4.271 s)
+ # PASS  src/games/games.controller.spec.ts (4.865 s)
+ # PASS  src/games/games.service.spec.ts (5.552 s)
 ```
 
-## Support
+To run the e2e tests you should access to the NodeJS Docker container and run:
+```bash
+$ npm run test:e2e
+ # PASS  test/app.e2e-spec.ts (5.571 s)
+ # PASS  test/games.e2e-spec.ts (5.748 s)
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# 🤔 Project questions and answers
+In this section I wanted to add some questions that came to my mind during the development of this test, and I wanted to keep it documented:
 
-## Stay in touch
+**🙋 Why is everything coupled to the Framework?**
+> I love to learn new things, and this is one of these opportunities to code with something unfamiliar, NestJS. It was my first contact with it, so I pretended to do the things in the way the framework recommended.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+**🙋 On what have you based your decisions to follow good practices?**
+> I tried to follow as much as possible the examples in the documentation, in addition to the NestJS good practices repository: https://github.com/nestjs/nest/tree/master/sample
 
-## License
+**🙋 And this has led you to have anemic entities that are not very friendly to OOP principles...**
+> Exactly, I would like to encapsulate the properties, following principles like "Tell, don't ask", among others. But this can sometimes be a worthwhile tradeoff that is agreed with the team, because it is not necessary to be radical with every software concept in the industry. 
 
-Nest is [MIT licensed](LICENSE).
+**🙋 Why aren't you testing the integration with database?**
+> This is something that I would have liked to do in order to make the application's tests more reliables. I didn't do it because I've no more time to implement the database seeds, independent test database transactions, etc.
+> Another great improvement would be to add Gherkin e2e tests, with cucumber, for example.
+
+**🙋 Do you documented the endpoints with OpenAPI?**
+> No, this would be great, and I find that NestJS has the SwaggerModule, that makes its integration very fast just by adding it to the module file.
+
+**🙋 How would you have done it without the NestJS architecture proposal in its documentation?**
+> I've really enjoy coding with clean architectures such as Hexagonal, DDD and TDD. So in short, I would have moved all the application logic to the entities, which would be decoupled from the infrastructure layer at the domain layer, along with the repository interfaces. The services would be in the application layer, for the purpose of orchestrating the entities and repositories. The infrastructure layer would have the controllers and the concrete implementations of the repositories. The unit tests will check the services of the application layer, which would not be necessary to raise the framework to execute them, with this we would cover the logic of the entities too. The integration tests would cover the concrete implementations of the repositories. And the 2e2 tests would check the behavior of the controller, all the domain logic and the database connections. 
